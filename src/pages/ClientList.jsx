@@ -304,7 +304,6 @@ const ClientList = () => {
         </div>
       )}
       </div>
-    </div>
   );
 };
 
