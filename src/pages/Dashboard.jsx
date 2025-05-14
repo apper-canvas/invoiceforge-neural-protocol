@@ -85,14 +85,6 @@ const Dashboard = () => {
       </div>
     );
   }
-  const summaryData = {
-    totalRevenue: 12450.75,
-    outstanding: 3280.50,
-    paid: 9170.25,
-    pendingInvoices: 8,
-    totalInvoices: 42,
-    revenueChange: 12.3, // percentage
-  };
   
   
   const formatCurrency = (amount) => {
