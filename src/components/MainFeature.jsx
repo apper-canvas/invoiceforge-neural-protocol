@@ -274,15 +274,16 @@ const MainFeature = () => {
   return (
     <div className="w-full">
       {showPreview ? (
-        loading ? (
-          <div className="flex items-center justify-center h-64">Loading...</div>
-        ) : (
-          <InvoicePreview formData={formData} onClose={() => setShowPreview(false)} />
+          loading ? (
+            <div className="flex items-center justify-center h-64">Loading...</div>
+          ) : (
+            <InvoicePreview formData={formData} onClose={() => setShowPreview(false)} />
+          )
       ) : (
-        <>
-          <header className="mb-6">
-            <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-6">
-              <div className="flex items-center mb-4 md:mb-0">
+          <>
+            <header className="mb-6">
+              <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-6">
+                <div className="flex items-center mb-4 md:mb-0">
                 <FileInvoiceIcon className="h-8 w-8 text-primary mr-2" />
                 <h1 className="text-xl md:text-2xl font-bold">Create New Invoice</h1>
               </div>
