@@ -175,16 +175,16 @@ const MainFeature = () => {
   };
   
   return (
-    <div className="container mx-auto px-4 py-6 md:py-12 max-w-6xl">
+    <div className="w-full">
       {showPreview ? (
         <InvoicePreview formData={formData} onClose={() => setShowPreview(false)} />
       ) : (
         <>
-          <header className="mb-8">
+          <header className="mb-6">
             <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-6">
               <div className="flex items-center mb-4 md:mb-0">
                 <FileInvoiceIcon className="h-8 w-8 text-primary mr-2" />
-                <h1 className="text-2xl md:text-3xl font-bold">Create New Invoice</h1>
+                <h1 className="text-xl md:text-2xl font-bold">Create New Invoice</h1>
               </div>
               
               <div className="flex flex-wrap gap-2">
@@ -213,7 +213,7 @@ const MainFeature = () => {
             </div>
             
             <div className="bg-white dark:bg-surface-800 rounded p-1 flex mb-4 border border-surface-200 dark:border-surface-700 overflow-x-auto">
-              <button
+              <button 
                 onClick={() => setActiveTab('details')}
                 className={`py-2 px-4 rounded-lg flex-1 font-medium text-sm transition-all ${
                   activeTab === 'details' 

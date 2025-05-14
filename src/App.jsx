@@ -1,12 +1,21 @@
 import { useState, useEffect } from 'react';
 import { Routes, Route } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import { motion, AnimatePresence } from 'framer-motion';
 import getIcon from './utils/iconUtils';
 
 // Pages
 import Home from './pages/Home';
 import NotFound from './pages/NotFound';
+
+// Layout
+import Layout from './components/Layout';
+import Dashboard from './pages/Dashboard';
+import InvoiceList from './pages/InvoiceList';
+import ClientList from './pages/ClientList';
+import ProductList from './pages/ProductList';
+import Reports from './pages/Reports';
 
 // Components
 const MoonIcon = getIcon('Moon');
@@ -33,24 +42,17 @@ function App() {
   
   return (
     <>
-      <div className="min-h-screen">
-        {/* Theme Toggle Button */}
-        <motion.button
-          onClick={toggleDarkMode}
-          className="fixed bottom-4 right-4 z-50 p-2 rounded-full bg-white dark:bg-surface-800 border border-surface-200 dark:border-surface-700 shadow-md hover:shadow-lg hover:border-primary/30 dark:hover:border-primary-light/30 transition-all duration-300"
-          whileHover={{ opacity: 0.9 }}
-          whileTap={{ scale: 0.9 }}
-        >
-          {darkMode ? (
-            <SunIcon className="h-5 w-5 text-amber-400" />
-          ) : (
-            <MoonIcon className="h-5 w-5 text-primary" />
-          )}
-        </motion.button>
-        
+      <div className="min-h-screen bg-surface-50 dark:bg-surface-900">
         <AnimatePresence mode="wait">
-          <Routes>
-            <Route path="/" element={<Home />} />
+          <Routes>  
+            <Route path="/" element={<Layout darkMode={darkMode} toggleDarkMode={toggleDarkMode} />}>
+              <Route index element={<Dashboard />} />
+              <Route path="invoices" element={<InvoiceList />} />
+              <Route path="invoices/new" element={<Home />} />
+              <Route path="clients" element={<ClientList />} />
+              <Route path="products" element={<ProductList />} />
+              <Route path="reports" element={<Reports />} />
+            </Route>  
             <Route path="*" element={<NotFound />} />
           </Routes>
         </AnimatePresence>
