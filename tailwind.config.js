@@ -7,17 +7,17 @@ export default {
   theme: {
     extend: {
       colors: {
-        primary: { 
-          DEFAULT: '#3b82f6',
-          light: '#93c5fd', 
-          dark: '#2563eb'
+        primary: {
+          DEFAULT: '#8B5CF6',
+          light: '#A78BFA', 
+          dark: '#7C3AED'
         }, 
         secondary: { 
-          DEFAULT: '#22c55e',
-          light: '#86efac', 
-          dark: '#16a34a'
+          DEFAULT: '#0EA5E9',
+          light: '#38BDF8', 
+          dark: '#0284C7'
         }, 
-        accent: '#f59e0b',
+        accent: '#C084FC',
         surface: {
           50: '#f8fafc',   // Lightest
           100: '#f1f5f9',

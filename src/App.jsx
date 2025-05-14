@@ -37,14 +37,14 @@ function App() {
         {/* Theme Toggle Button */}
         <motion.button
           onClick={toggleDarkMode}
-          className="fixed bottom-4 right-4 z-50 p-2 rounded bg-white dark:bg-surface-800 border border-surface-200 dark:border-surface-700"
+          className="fixed bottom-4 right-4 z-50 p-2 rounded-full bg-white dark:bg-surface-800 border border-surface-200 dark:border-surface-700 shadow-md hover:shadow-lg hover:border-primary/30 dark:hover:border-primary-light/30 transition-all duration-300"
           whileHover={{ opacity: 0.9 }}
           whileTap={{ scale: 0.9 }}
         >
           {darkMode ? (
-            <SunIcon className="h-5 w-5 text-amber-500" />
+            <SunIcon className="h-5 w-5 text-amber-400" />
           ) : (
-            <MoonIcon className="h-5 w-5 text-surface-700" />
+            <MoonIcon className="h-5 w-5 text-primary" />
           )}
         </motion.button>
         
