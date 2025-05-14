@@ -12,10 +12,10 @@ export const fetchProducts = async (page = 1, limit = 10, searchQuery = '') => {
     // Build params object
     const params = {
       fields: [
-        { field: { name: "Id" } },
-        { field: { name: "Name" } },
-        { field: { name: "description" } },
-        { field: { name: "price" } }
+        { field: { field: { name: "Id" } } },
+        { field: { field: { name: "Name" } } },
+        { field: { field: { name: "description" } } },
+        { field: { field: { name: "price" } } }
       ],
       orderBy: [
         { field: "Name", direction: "ASC" }

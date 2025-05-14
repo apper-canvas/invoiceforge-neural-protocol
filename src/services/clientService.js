@@ -12,10 +12,10 @@ export const fetchClients = async (page = 1, limit = 10, searchQuery = '', filte
     // Build params object
     const params = {
       fields: [
-        { field: { name: "Id" } },
-        { field: { name: "Name" } },
-        { field: { name: "email" } },
-        { field: { name: "address" } }
+        { field: { field: { name: "Id" } } },
+        { field: { field: { name: "Name" } } },
+        { field: { field: { name: "email" } } },
+        { field: { field: { name: "address" } } }
       ],
       orderBy: [
         { field: "Name", direction: "ASC" }

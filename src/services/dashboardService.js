@@ -12,11 +12,21 @@ export const fetchDashboardStatistics = async () => {
     // Fetch all invoices to calculate statistics
     const params = {
       fields: [
-        { field: { name: "Id" } },
-        { field: { name: "invoiceNumber" } },
-        { field: { name: "date" } },
-        { field: { name: "total" } },
-        { field: { name: "status" } }
+        { 
+          field: { 
+            field: { name: "Id" } 
+          } 
+        },
+        { field: { field: { name: "invoiceNumber" } } },
+        { field: { field: { name: "date" } } },
+        { field: { field: { name: "total" } } },
+        { 
+          field: { 
+            field: { 
+              name: "status" 
+            } 
+          } 
+        }
       ]
     };
 

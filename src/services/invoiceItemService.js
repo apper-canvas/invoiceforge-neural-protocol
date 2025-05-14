@@ -11,13 +11,13 @@ export const fetchInvoiceItems = async (invoiceId) => {
 
     const params = {
       fields: [
-        { field: { name: "Id" } },
-        { field: { name: "Name" } },
-        { field: { name: "description" } },
-        { field: { name: "quantity" } },
-        { field: { name: "price" } },
-        { field: { name: "total" } },
-        { field: { name: "invoice_id" } }
+        { field: { field: { name: "Id" } } },
+        { field: { field: { name: "Name" } } },
+        { field: { field: { name: "description" } } },
+        { field: { field: { name: "quantity" } } },
+        { field: { field: { name: "price" } } },
+        { field: { field: { name: "total" } } },
+        { field: { field: { name: "invoice_id" } } }
       ],
       where: [
         {

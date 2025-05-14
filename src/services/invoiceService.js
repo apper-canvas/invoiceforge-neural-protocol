@@ -35,20 +35,20 @@ export const fetchInvoices = async (page = 1, limit = 10, searchQuery = '', stat
 
     const params = {
       fields: [
-        { field: { name: "Id" } },
-        { field: { name: "Name" } },
-        { field: { name: "invoiceNumber" } },
-        { field: { name: "date" } },
-        { field: { name: "dueDate" } },
-        { field: { name: "clientName" } },
-        { field: { name: "clientEmail" } },
-        { field: { name: "clientAddress" } },
-        { field: { name: "subtotal" } },
-        { field: { name: "taxRate" } },
-        { field: { name: "taxAmount" } },
-        { field: { name: "total" } },
-        { field: { name: "notes" } },
-        { field: { name: "status" } }
+        { field: { field: { name: "Id" } } },
+        { field: { field: { name: "Name" } } },
+        { field: { field: { name: "invoiceNumber" } } },
+        { field: { field: { name: "date" } } },
+        { field: { field: { name: "dueDate" } } },
+        { field: { field: { name: "clientName" } } },
+        { field: { field: { name: "clientEmail" } } },
+        { field: { field: { name: "clientAddress" } } },
+        { field: { field: { name: "subtotal" } } },
+        { field: { field: { name: "taxRate" } } },
+        { field: { field: { name: "taxAmount" } } },
+        { field: { field: { name: "total" } } },
+        { field: { field: { name: "notes" } } },
+        { field: { field: { name: "status" } } }
       ],
       orderBy: [
         { field: "date", direction: "DESC" }
@@ -156,10 +156,10 @@ export const fetchInvoiceSummaryData = async () => {
 
     const params = {
       fields: [
-        { field: { name: "Id" } },
-        { field: { name: "total" } },
-        { field: { name: "status" } },
-        { field: { name: "dueDate" } }
+        { field: { field: { name: "Id" } } },
+        { field: { field: { name: "total" } } },
+        { field: { field: { name: "status" } } },
+        { field: { field: { name: "dueDate" } } }
       ],
       // Get all invoices for accurate summary
       pagingInfo: {
