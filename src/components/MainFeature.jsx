@@ -212,7 +212,7 @@ const MainFeature = () => {
               </div>
             </div>
             
-            <div className="bg-white dark:bg-surface-800 rounded-xl p-1 flex mb-4 shadow-sm overflow-x-auto">
+            <div className="bg-white dark:bg-surface-800 rounded p-1 flex mb-4 border border-surface-200 dark:border-surface-700 overflow-x-auto">
               <button
                 onClick={() => setActiveTab('details')}
                 className={`py-2 px-4 rounded-lg flex-1 font-medium text-sm transition-all ${
@@ -246,7 +246,7 @@ const MainFeature = () => {
             </div>
           </header>
           
-          <div className="card neu-shadow-light dark:neu-shadow-dark">
+          <div className="card">
             <AnimatePresence mode="wait">
               {activeTab === 'details' && (
                 <motion.div
@@ -300,7 +300,7 @@ const MainFeature = () => {
                       </div>
                     </div>
                     
-                    <div className="bg-surface-50 dark:bg-surface-700/30 p-4 rounded-xl border border-surface-200 dark:border-surface-600">
+                    <div className="bg-surface-50 dark:bg-surface-700/30 p-4 rounded border border-surface-200 dark:border-surface-600">
                       <h3 className="text-lg font-semibold mb-4 flex items-center">
                         Client Information
                       </h3>
@@ -460,7 +460,7 @@ const MainFeature = () => {
                     <div>
                       <h3 className="text-lg font-semibold mb-3">Invoice Summary</h3>
                       
-                      <div className="bg-surface-50 dark:bg-surface-700/30 p-4 rounded-xl border border-surface-200 dark:border-surface-600">
+                      <div className="bg-surface-50 dark:bg-surface-700/30 p-4 rounded border border-surface-200 dark:border-surface-600">
                         <div className="flex justify-between items-center mb-2">
                           <span className="text-surface-700 dark:text-surface-300">Invoice Number:</span>
                           <span className="font-medium">{formData.invoiceNumber}</span>
@@ -488,7 +488,7 @@ const MainFeature = () => {
                     <div>
                       <h3 className="text-lg font-semibold mb-3">Payment Details</h3>
                       
-                      <div className="bg-surface-50 dark:bg-surface-700/30 p-4 rounded-xl border border-surface-200 dark:border-surface-600 mb-4">
+                      <div className="bg-surface-50 dark:bg-surface-700/30 p-4 rounded border border-surface-200 dark:border-surface-600 mb-4">
                         <div className="flex justify-between items-center mb-2">
                           <span className="text-surface-700 dark:text-surface-300">Subtotal:</span>
                           <span className="font-medium">{formatCurrency(formData.subtotal)}</span>
@@ -610,7 +610,7 @@ const InvoicePreview = ({ formData, onClose }) => {
         </div>
       </div>
       
-      <div className="card neu-shadow-light dark:neu-shadow-dark p-8 max-w-4xl mx-auto">
+      <div className="card p-8 max-w-4xl mx-auto">
         <div className="flex flex-col md:flex-row justify-between mb-12">
           <div>
             <h1 className="text-3xl font-bold mb-1 text-primary">INVOICE</h1>
@@ -645,8 +645,8 @@ const InvoicePreview = ({ formData, onClose }) => {
         <div className="overflow-x-auto mb-8">
           <table className="w-full">
             <thead>
-              <tr className="bg-surface-100 dark:bg-surface-700 text-left">
-                <th className="p-3 rounded-l-lg">Description</th>
+              <tr className="border-b-2 border-surface-200 dark:border-surface-700 text-left">
+                <th className="p-3">Description</th>
                 <th className="p-3 text-right">Quantity</th>
                 <th className="p-3 text-right">Unit Price</th>
                 <th className="p-3 text-right rounded-r-lg">Amount</th>

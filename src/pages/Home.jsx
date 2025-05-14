@@ -53,8 +53,8 @@ const Home = () => {
               transition={{ duration: 0.6 }}
               className="flex justify-center mb-4"
             >
-              <div className="h-16 w-16 bg-gradient-to-br from-primary to-primary-dark rounded-2xl flex items-center justify-center shadow-lg mb-2">
-                <FileInvoiceIcon className="h-8 w-8 text-white" />
+              <div className="h-14 w-14 bg-primary rounded flex items-center justify-center mb-2">
+                <FileInvoiceIcon className="h-7 w-7 text-white" />
               </div>
             </motion.div>
             
@@ -62,7 +62,7 @@ const Home = () => {
               initial={{ y: -20, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               transition={{ duration: 0.6, delay: 0.1 }}
-              className="text-4xl md:text-5xl font-extrabold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-primary to-primary-dark"
+              className="text-4xl md:text-5xl font-bold mb-4 text-primary"
             >
               InvoiceForge
             </motion.h1>
@@ -84,7 +84,7 @@ const Home = () => {
             >
               <button 
                 onClick={handleStartDemoClick}
-                className="btn btn-primary px-8 py-3 text-lg rounded-xl shadow-lg flex items-center gap-2 group mx-auto"
+                className="btn btn-primary px-6 py-2 text-lg flex items-center gap-2 group mx-auto"
               >
                 Start Creating Invoices
                 <ArrowRightIcon className="h-5 w-5 group-hover:translate-x-1 transition-transform" />
@@ -98,7 +98,7 @@ const Home = () => {
             animate="visible"
             className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16"
           >
-            <motion.div variants={childVariants} className="card p-6 bg-white dark:bg-surface-800 border border-surface-200 dark:border-surface-700 rounded-2xl shadow-card hover:shadow-lg transition-shadow">
+            <motion.div variants={childVariants} className="card p-6">
               <div className="h-12 w-12 bg-primary/10 dark:bg-primary/20 rounded-xl flex items-center justify-center mb-4">
                 <FileInvoiceIcon className="h-6 w-6 text-primary" />
               </div>
@@ -106,7 +106,7 @@ const Home = () => {
               <p className="text-surface-600 dark:text-surface-400">Create customizable, branded invoices that reflect your business identity and impress your clients.</p>
             </motion.div>
             
-            <motion.div variants={childVariants} className="card p-6 bg-white dark:bg-surface-800 border border-surface-200 dark:border-surface-700 rounded-2xl shadow-card hover:shadow-lg transition-shadow">
+            <motion.div variants={childVariants} className="card p-6">
               <div className="h-12 w-12 bg-secondary/10 dark:bg-secondary/20 rounded-xl flex items-center justify-center mb-4">
                 <UsersIcon className="h-6 w-6 text-secondary" />
               </div>
@@ -114,7 +114,7 @@ const Home = () => {
               <p className="text-surface-600 dark:text-surface-400">Organize your client information, track payment history, and manage client-specific pricing all in one place.</p>
             </motion.div>
             
-            <motion.div variants={childVariants} className="card p-6 bg-white dark:bg-surface-800 border border-surface-200 dark:border-surface-700 rounded-2xl shadow-card hover:shadow-lg transition-shadow">
+            <motion.div variants={childVariants} className="card p-6">
               <div className="h-12 w-12 bg-accent/10 dark:bg-accent/20 rounded-xl flex items-center justify-center mb-4">
                 <ChartBarIcon className="h-6 w-6 text-accent" />
               </div>
@@ -132,7 +132,7 @@ const Home = () => {
             <h2 className="text-2xl font-bold mb-8">Ready to streamline your invoicing process?</h2>
             <button 
               onClick={handleStartDemoClick}
-              className="btn neu-shadow-light dark:neu-shadow-dark bg-surface-50 dark:bg-surface-800 hover:bg-surface-100 dark:hover:bg-surface-700 px-8 py-3 rounded-xl text-lg font-medium transition-all duration-300"
+              className="btn bg-surface-50 dark:bg-surface-800 hover:bg-surface-100 dark:hover:bg-surface-700 border border-surface-200 dark:border-surface-700 px-6 py-2 text-lg"
             >
               Try InvoiceForge Now
             </button>

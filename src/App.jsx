@@ -37,8 +37,8 @@ function App() {
         {/* Theme Toggle Button */}
         <motion.button
           onClick={toggleDarkMode}
-          className="fixed bottom-4 right-4 z-50 p-3 rounded-full bg-white dark:bg-surface-800 shadow-md border border-surface-200 dark:border-surface-700"
-          whileHover={{ scale: 1.1 }}
+          className="fixed bottom-4 right-4 z-50 p-2 rounded bg-white dark:bg-surface-800 border border-surface-200 dark:border-surface-700"
+          whileHover={{ opacity: 0.9 }}
           whileTap={{ scale: 0.9 }}
         >
           {darkMode ? (
@@ -68,8 +68,7 @@ function App() {
         pauseOnHover
         theme={darkMode ? "dark" : "light"}
         toastStyle={{
-          borderRadius: '0.75rem',
-          boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1)',
+          borderRadius: '4px',
         }}
       />
     </>

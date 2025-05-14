@@ -16,7 +16,7 @@ const NotFound = () => {
       exit={{ opacity: 0 }}
       className="min-h-screen flex flex-col items-center justify-center p-4 text-center"
     >
-      <div className="w-24 h-24 mb-6 flex items-center justify-center bg-amber-100 dark:bg-amber-900/30 rounded-full">
+      <div className="w-20 h-20 mb-6 flex items-center justify-center bg-amber-100 dark:bg-amber-900/30">
         <AlertTriangleIcon className="h-12 w-12 text-amber-500" />
       </div>
       
@@ -53,7 +53,6 @@ const NotFound = () => {
         transition={{ delay: 0.4 }}
         onClick={() => navigate('/')}
         className="btn btn-primary flex items-center gap-2"
-        whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
       >
         <HomeIcon className="h-5 w-5" />
