@@ -144,3 +144,45 @@ export const updateInvoice = async (invoiceData) => {
     throw error;
   }
 };
+
+// Fetch data for invoice summary report
+export const fetchInvoiceSummaryData = async () => {
+  try {
+    const { ApperClient } = window.ApperSDK;
+    const apperClient = new ApperClient({
+      apperProjectId: import.meta.env.VITE_APPER_PROJECT_ID,
+      apperPublicKey: import.meta.env.VITE_APPER_PUBLIC_KEY
+    });
+
+    const params = {
+      fields: [
+        { field: { name: "Id" } },
+        { field: { name: "total" } },
+        { field: { name: "status" } },
+        { field: { name: "dueDate" } }
+      ],
+      // Get all invoices for accurate summary
+      pagingInfo: {
+        limit: 1000, // Large limit to get all invoices
+        offset: 0
+      }
+    };
+
+    const response = await apperClient.fetchRecords("invoice", params);
+    
+    if (!response || !response.data) {
+      return {
+        invoices: [],
+        totalCount: 0
+      };
+    }
+    
+    return {
+      invoices: response.data,
+      totalCount: response.count || response.data.length
+    };
+  } catch (error) {
+    console.error("Error fetching invoice summary data:", error);
+    throw error;
+  }
+};

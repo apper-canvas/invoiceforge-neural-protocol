@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { fetchInvoices } from '../services/invoiceService';
 import { fetchClients } from '../services/clientService';
+import InvoiceSummaryReport from '../components/InvoiceSummaryReport';
 import Chart from 'react-apexcharts';
 import getIcon from '../utils/iconUtils';
 
@@ -150,7 +151,7 @@ const Reports = () => {
           <button 
             onClick={loadReportData}
             className="btn btn-outline flex items-center gap-2"
-          >
+            >
             <RefreshIcon className="h-4 w-4" />
             Refresh Data
           </button>
@@ -164,7 +165,17 @@ const Reports = () => {
       ) : error ? (
         <div className="text-red-500 dark:text-red-400">{error}</div>
       ) : (
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="space-y-6">
+          {/* Invoice Summary Report */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3 }}
+          >
+            <InvoiceSummaryReport />
+          </motion.div>
+          
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <div className="dashboard-card">
             <h3 className="text-lg font-semibold mb-4 flex items-center">
               <ChartIcon className="h-5 w-5 text-primary mr-2" />
@@ -195,6 +206,7 @@ const Reports = () => {
             </div>
           </div>
         </div>
+      </div>
       )}
     </div>
   );
