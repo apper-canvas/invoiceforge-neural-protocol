@@ -1,7 +1,7 @@
 // Client service for handling client-related operations
 
 // Get all clients with pagination and filtering
-export const fetchClients = async (page = 1, limit = 10, searchQuery = '') => {
+export const fetchClients = async (page = 1, limit = 10, searchQuery = '', filterType = '') => {
   try {
     const { ApperClient } = window.ApperSDK;
     const apperClient = new ApperClient({
@@ -26,8 +26,8 @@ export const fetchClients = async (page = 1, limit = 10, searchQuery = '') => {
       }
     };
 
-    // Add search condition if search query exists
-    if (searchQuery) {
+    // Add search condition if search query exists and filter type is not "all"
+    if (searchQuery && filterType !== 'all-clients') {
       params.whereGroups = [{
         operator: "OR",
         subGroups: [

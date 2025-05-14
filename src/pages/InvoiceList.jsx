@@ -18,6 +18,7 @@ const TrashIcon = getIcon('Trash');
 const InvoiceList = () => {
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
+  const [clientFilter, setClientFilter] = useState('');
   const [statusFilter, setStatusFilter] = useState('');
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [invoiceToDelete, setInvoiceToDelete] = useState(null);
@@ -31,7 +32,7 @@ const InvoiceList = () => {
     const loadInvoices = async () => {
       try {
         dispatch(setLoading(true));
-        const result = await fetchInvoices(currentPage, PAGE_SIZE, searchQuery, statusFilter);
+        const result = await fetchInvoices(currentPage, PAGE_SIZE, searchQuery, statusFilter, clientFilter);
         dispatch(setInvoices(result.invoices));
         dispatch(setTotalCount(result.totalCount));
         dispatch(setLoading(false));
@@ -46,7 +47,7 @@ const InvoiceList = () => {
     };
 
     loadInvoices();
-  }, [dispatch, currentPage, searchQuery, statusFilter]);
+  }, [dispatch, currentPage, searchQuery, statusFilter, clientFilter]);
   
   const handlePageChange = (newPage) => {
     dispatch(setCurrentPage(newPage));
@@ -54,6 +55,12 @@ const InvoiceList = () => {
 
   const handleSearch = (e) => {
     e.preventDefault();
+    dispatch(setCurrentPage(1));
+  };
+
+  const handleClientFilterChange = (value) => {
+    setClientFilter(value);
+    if (value === 'all-clients') setSearchQuery('');
     dispatch(setCurrentPage(1));
   };
 
@@ -102,7 +109,7 @@ const InvoiceList = () => {
       
       <div className="dashboard-card mb-6">
         <div className="flex flex-col md:flex-row md:items-center gap-4 mb-6">
-          <div className="relative flex-1">
+          <div className="relative flex-grow">
             <form onSubmit={handleSearch}>
               <input
                 type="text"
@@ -114,8 +121,15 @@ const InvoiceList = () => {
               <SearchIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-surface-500" />
             </form>
           </div>
+
+          <div className="w-full md:w-48">
+            <select className="input" value={clientFilter} onChange={(e) => handleClientFilterChange(e.target.value)}>
+              <option value="">All Clients</option>
+              <option value="all-clients">All Clients (Force)</option>
+            </select>
+          </div>
           
-          <div>
+          <div className="w-full md:w-48">
             <select className="input" value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)}>
               <option value="">All Status</option>
               <option value="paid">Paid</option>

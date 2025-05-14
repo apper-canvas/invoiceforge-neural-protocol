@@ -15,6 +15,7 @@ const SaveIcon = getIcon('Save');
 
 const ClientList = () => {
   const [searchQuery, setSearchQuery] = useState('');
+  const [filterType, setFilterType] = useState('');
   const [showClientModal, setShowClientModal] = useState(false);
   const [editingClient, setEditingClient] = useState(null);
   const [clientFormData, setClientFormData] = useState({
@@ -29,13 +30,13 @@ const ClientList = () => {
 
   useEffect(() => {
     loadClients();
-  }, [dispatch, currentPage, searchQuery]);
+  }, [dispatch, currentPage, searchQuery, filterType]);
 
   const loadClients = async () => {
     try {
       dispatch(setLoading(true));
-      const result = await fetchClients(currentPage, PAGE_SIZE, searchQuery);
-      dispatch(setClients(result.clients));
+      const result = await fetchClients(currentPage, PAGE_SIZE, searchQuery, filterType);
+      dispatch(setClients(result.clients)); 
       dispatch(setTotalCount(result.totalCount));
       dispatch(setLoading(false));
     } catch (error) {
@@ -52,6 +53,16 @@ const ClientList = () => {
 
   const handleSearch = (e) => {
     e.preventDefault();
+    dispatch(setCurrentPage(1));
+  };
+
+  const handleFilterChange = (value) => {
+    setFilterType(value);
+    
+    if (value === 'all-clients') {
+      setSearchQuery(''); // Clear search when using the "All Clients" filter
+    }
+    
     dispatch(setCurrentPage(1));
   };
 
@@ -147,7 +158,7 @@ const ClientList = () => {
 
       <div className="dashboard-card mb-6">
         <div className="flex flex-col md:flex-row md:items-center gap-4 mb-6">
-          <div className="relative flex-1">
+          <div className="relative flex-grow">
             <form onSubmit={handleSearch}>
               <input
                 type="text"
@@ -158,6 +169,16 @@ const ClientList = () => {
               />
               <SearchIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-surface-500" />
             </form>
+          </div>
+          <div className="w-full md:w-48">
+            <select 
+              className="input"
+              value={filterType}
+              onChange={(e) => handleFilterChange(e.target.value)}
+            >
+              <option value="">Filter Clients</option>
+              <option value="all-clients">All Clients</option>
+            </select>
           </div>
         </div>
 
