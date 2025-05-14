@@ -1,7 +1,10 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
 import getIcon from '../utils/iconUtils';
+import { fetchDashboardStatistics } from '../services/dashboardService';
+import { fetchInvoices } from '../services/invoiceService';
 
 // Icons
 const FileInvoiceIcon = getIcon('FileText');
@@ -17,17 +20,71 @@ const ArrowDownIcon = getIcon('ArrowDown');
 
 const Dashboard = () => {
   const [loading, setLoading] = useState(true);
+  const [recentInvoices, setRecentInvoices] = useState([]);
+  const [error, setError] = useState(null);
+  const [summaryData, setSummaryData] = useState({
+    totalRevenue: 0,
+    outstanding: 0,
+    paid: 0,
+    pendingInvoices: 0,
+    totalInvoices: 0,
+    revenueChange: 0
+  });
   
   useEffect(() => {
-    // Simulate loading data
-    const timer = setTimeout(() => {
-      setLoading(false);
-    }, 500);
+    // Fetch dashboard data
+    const fetchDashboardData = async () => {
+      try {
+        setLoading(true);
+        
+        // Fetch statistics
+        const statistics = await fetchDashboardStatistics();
+        setSummaryData(statistics);
+        
+        // Fetch recent invoices (limit to 5)
+        const { invoices } = await fetchInvoices(1, 5);
+        setRecentInvoices(invoices);
+        
+        setLoading(false);
+      } catch (error) {
+        console.error("Error loading dashboard data:", error);
+        setError("Failed to load dashboard data. Please try again.");
+        setLoading(false);
+      }
+    };
     
-    return () => clearTimeout(timer);
+    fetchDashboardData();
   }, []);
   
-  // Sample data
+  // Handle refresh
+  const handleRefresh = async () => {
+    try {
+      setLoading(true);
+      
+      // Fetch statistics
+      const statistics = await fetchDashboardStatistics();
+      setSummaryData(statistics);
+      
+      // Fetch recent invoices (limit to 5)
+      const { invoices } = await fetchInvoices(1, 5);
+      setRecentInvoices(invoices);
+      
+      setLoading(false);
+    } catch (error) {
+      console.error("Error refreshing dashboard data:", error);
+      setError("Failed to refresh dashboard data. Please try again.");
+      setLoading(false);
+    }
+  };
+  
+  // If there's an error, display it
+  if (error) {
+    return (
+      <div className="flex-1 p-4 md:p-6">
+        <div className="text-red-500 dark:text-red-400">{error}</div>
+      </div>
+    );
+  }
   const summaryData = {
     totalRevenue: 12450.75,
     outstanding: 3280.50,
@@ -37,13 +94,6 @@ const Dashboard = () => {
     revenueChange: 12.3, // percentage
   };
   
-  const recentInvoices = [
-    { id: 'INV-2023-042', client: 'Acme Corp', amount: 1250.00, date: '2023-03-15', status: 'paid' },
-    { id: 'INV-2023-041', client: 'Wayne Enterprises', amount: 875.50, date: '2023-03-12', status: 'pending' },
-    { id: 'INV-2023-040', client: 'Stark Industries', amount: 2340.00, date: '2023-03-10', status: 'pending' },
-    { id: 'INV-2023-039', client: 'Daily Planet', amount: 450.25, date: '2023-03-05', status: 'paid' },
-    { id: 'INV-2023-038', client: 'Umbrella Corp', amount: 1890.75, date: '2023-03-01', status: 'paid' },
-  ];
   
   const formatCurrency = (amount) => {
     return new Intl.NumberFormat('en-US', {
@@ -79,6 +129,18 @@ const Dashboard = () => {
       transition: { duration: 0.3 }
     }
   };
+  
+  // Loading state
+  if (loading) {
+    return (
+      <div className="flex-1 p-4 md:p-6">
+        <div className="flex items-center justify-center h-64">
+          <div className="w-10 h-10 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
+        </div>
+      </div>
+    );
+  }
+  
   
   return (
     <div className="flex-1 p-4 md:p-6">
@@ -169,9 +231,9 @@ const Dashboard = () => {
                 </thead>
                 <tbody>
                   {recentInvoices.map(invoice => (
-                    <tr key={invoice.id}>
-                      <td>{invoice.id}</td>
-                      <td>{invoice.client}</td>
+                    <tr key={invoice.Id}>
+                      <td>{invoice.invoiceNumber}</td>
+                      <td>{invoice.clientName}</td>
                       <td>{formatCurrency(invoice.amount)}</td>
                       <td>{formatDate(invoice.date)}</td>
                       <td>

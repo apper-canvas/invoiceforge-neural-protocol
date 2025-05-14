@@ -2,6 +2,11 @@ import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { toast } from 'react-toastify';
 import getIcon from '../utils/iconUtils';
+import { useNavigate } from 'react-router-dom';
+import { createInvoice } from '../services/invoiceService';
+import { createInvoiceItems } from '../services/invoiceItemService';
+import { fetchClients } from '../services/clientService';
+import { fetchProducts } from '../services/productService';
 
 // Icons
 const FileInvoiceIcon = getIcon('FileText');
@@ -21,6 +26,10 @@ const BackIcon = getIcon('ArrowLeft');
 const MainFeature = () => {
   const [activeTab, setActiveTab] = useState('details');
   const [showPreview, setShowPreview] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [clients, setClients] = useState([]);
+  const [products, setProducts] = useState([]);
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     invoiceNumber: generateInvoiceNumber(),
     date: formatDate(new Date()),
@@ -35,6 +44,42 @@ const MainFeature = () => {
     total: 0,
     notes: '',
   });
+  
+  // Load client and product data for form selectors
+  useEffect(() => {
+    const loadFormData = async () => {
+      try {
+        setLoading(true);
+        
+        // Load clients for client selection
+        const clientResult = await fetchClients(1, 100); // Get up to 100 clients
+        setClients(clientResult.clients || []);
+        
+        // Load products for product selection
+        const productResult = await fetchProducts(1, 100); // Get up to 100 products
+        setProducts(productResult.products || []);
+        
+        setLoading(false);
+      } catch (error) {
+        console.error("Error loading form data:", error);
+        toast.error("Failed to load clients and products");
+        setLoading(false);
+      }
+    };
+    
+    loadFormData();
+  }, []);
+  
+  // Function to populate a product item
+  const handleSelectProduct = (productId, itemId) => {
+    const selectedProduct = products.find(p => p.Id === parseInt(productId));
+    if (selectedProduct) {
+      handleItemChange(itemId, 'description', selectedProduct.Name);
+      handleItemChange(itemId, 'price', selectedProduct.price);
+      // Don't change quantity as user may have already set it
+      handleItemChange(itemId, 'total', formData.items.find(i => i.id === itemId).quantity * selectedProduct.price);
+    }
+  };
   
   // Generate invoice number like INV-2023-001
   function generateInvoiceNumber() {
@@ -118,21 +163,36 @@ const MainFeature = () => {
     toast.info("Item removed");
   };
   
-  // Save invoice
-  const saveInvoice = () => {
+  // Handle client selection
+  const handleClientSelect = (e) => {
+    const clientId = parseInt(e.target.value);
+    const selectedClient = clients.find(c => c.Id === clientId);
+    
+    if (selectedClient) {
+      setFormData(prev => ({
+        ...prev,
+        clientName: selectedClient.Name,
+        clientEmail: selectedClient.email,
+        clientAddress: selectedClient.address || ''
+      }));
+    }
+  };
+  
+  // Save invoice to database
+  const saveInvoice = async () => {
     // Validate form
     if (!formData.clientName) {
       toast.error("Please enter client name");
       setActiveTab('details');
       return;
     }
-    
+
     if (!formData.clientEmail) {
       toast.error("Please enter client email");
       setActiveTab('details');
       return;
     }
-    
+
     // Check if any item has empty description
     const hasEmptyItems = formData.items.some(item => !item.description);
     if (hasEmptyItems) {
@@ -140,10 +200,47 @@ const MainFeature = () => {
       setActiveTab('items');
       return;
     }
-    
-    // In a real app, this would save to a database or API
-    toast.success("Invoice saved successfully!");
-    console.log("Invoice data:", formData);
+
+    try {
+      setLoading(true);
+      
+      // Prepare invoice data for creation
+      const invoiceData = {
+        invoiceNumber: formData.invoiceNumber,
+        date: formData.date,
+        dueDate: formData.dueDate,
+        clientName: formData.clientName,
+        clientEmail: formData.clientEmail,
+        clientAddress: formData.clientAddress,
+        subtotal: formData.subtotal,
+        taxRate: formData.taxRate,
+        taxAmount: formData.taxAmount,
+        total: formData.total,
+        notes: formData.notes,
+        status: 'pending'
+      };
+      
+      // Create invoice in database
+      const createdInvoice = await createInvoice(invoiceData);
+      
+      // Create invoice items
+      const invoiceItems = formData.items.map(item => ({
+        description: item.description,
+        quantity: item.quantity,
+        price: item.price,
+        total: item.total,
+        invoice_id: createdInvoice.Id
+      }));
+      
+      await createInvoiceItems(invoiceItems, createdInvoice.Id);
+      
+      toast.success("Invoice saved successfully!");
+      navigate('/invoices');
+    } catch (error) {
+      console.error("Error saving invoice:", error);
+      toast.error("Failed to save invoice. Please try again.");
+      setLoading(false);
+    }
   };
   
   // Send invoice
@@ -177,6 +274,9 @@ const MainFeature = () => {
   return (
     <div className="w-full">
       {showPreview ? (
+        loading ? (
+          <div className="flex items-center justify-center h-64">Loading...</div>
+        ) : (
         <InvoicePreview formData={formData} onClose={() => setShowPreview(false)} />
       ) : (
         <>
@@ -304,9 +404,29 @@ const MainFeature = () => {
                       <h3 className="text-lg font-semibold mb-4 flex items-center">
                         Client Information
                       </h3>
+
+                      {/* Client selection dropdown */}
+                      <div className="mb-4">
+                        <label className="label">Select Existing Client</label>
+                        <select 
+                          className="input" 
+                          onChange={handleClientSelect}
+                          defaultValue=""
+                        >
+                          <option value="" disabled>-- Select Client --</option>
+                          {clients.map(client => (
+                            <option key={client.Id} value={client.Id}>
+                              {client.Name} ({client.email})
+                            </option>
+                          ))}
+                        </select>
+                        <p className="text-xs text-surface-500 dark:text-surface-400 mt-1">
+                          Or enter client details manually below
+                        </p>
+                      </div>
                       
                       <div className="mb-4">
-                        <label className="label">Client Name</label>
+                        <label className="label">Client Name *</label>
                         <input 
                           type="text" 
                           name="clientName"
@@ -314,11 +434,12 @@ const MainFeature = () => {
                           onChange={handleChange}
                           placeholder="Enter client name"
                           className="input"
+                          required
                         />
                       </div>
                       
                       <div className="mb-4">
-                        <label className="label">Client Email</label>
+                        <label className="label">Client Email *</label>
                         <input 
                           type="email" 
                           name="clientEmail"
@@ -326,6 +447,7 @@ const MainFeature = () => {
                           onChange={handleChange}
                           placeholder="client@example.com"
                           className="input"
+                          required
                         />
                       </div>
                       
@@ -371,6 +493,19 @@ const MainFeature = () => {
                           <th className="text-right py-3 px-2 w-32">Total</th>
                           <th className="w-16"></th>
                         </tr>
+                      <td className="py-2 px-2">
+                        <select 
+                          className="input text-sm"
+                          onChange={(e) => handleSelectProduct(e.target.value, item.id)}
+                        >
+                          <option value="">-- Select Product --</option>
+                          {products.map(product => (
+                            <option key={product.Id} value={product.Id}>
+                              {product.Name} (${product.price.toFixed(2)})
+                            </option>
+                          ))}
+                        </select>
+                      </td>
                       </thead>
                       <tbody>
                         {formData.items.map((item) => (
@@ -556,7 +691,7 @@ const MainFeature = () => {
                       </button>
                       <button 
                         onClick={saveInvoice}
-                        className="btn btn-primary flex items-center gap-2"
+                        disabled={loading}>
                       >
                         <SaveIcon className="h-4 w-4" />
                         Save Invoice
@@ -568,6 +703,7 @@ const MainFeature = () => {
             </AnimatePresence>
           </div>
         </>
+        )
       )}
     </div>
   );

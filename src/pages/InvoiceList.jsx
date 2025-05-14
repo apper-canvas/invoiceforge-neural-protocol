@@ -1,7 +1,11 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
+import { toast } from 'react-toastify';
+import { useDispatch, useSelector } from 'react-redux';
 import getIcon from '../utils/iconUtils';
+import { fetchInvoices } from '../services/invoiceService';
+import { setInvoices, setLoading, setError, setTotalCount, setCurrentPage } from '../store/invoiceSlice';
 
 // Icons
 const PlusIcon = getIcon('Plus');
@@ -14,37 +18,52 @@ const TrashIcon = getIcon('Trash');
 const InvoiceList = () => {
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
+  const [statusFilter, setStatusFilter] = useState('');
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [invoiceToDelete, setInvoiceToDelete] = useState(null);
   
-  // Sample invoice data
-  const invoices = [
-    { id: 'INV-2023-042', client: 'Acme Corp', amount: 1250.00, date: '2023-03-15', status: 'paid', dueDate: '2023-04-15' },
-    { id: 'INV-2023-041', client: 'Wayne Enterprises', amount: 875.50, date: '2023-03-12', status: 'pending', dueDate: '2023-04-12' },
-    { id: 'INV-2023-040', client: 'Stark Industries', amount: 2340.00, date: '2023-03-10', status: 'pending', dueDate: '2023-04-10' },
-    { id: 'INV-2023-039', client: 'Daily Planet', amount: 450.25, date: '2023-03-05', status: 'paid', dueDate: '2023-04-05' },
-    { id: 'INV-2023-038', client: 'Umbrella Corp', amount: 1890.75, date: '2023-03-01', status: 'paid', dueDate: '2023-04-01' },
-    { id: 'INV-2023-037', client: 'Globex Corporation', amount: 3200.00, date: '2023-02-25', status: 'overdue', dueDate: '2023-03-25' },
-    { id: 'INV-2023-036', client: 'Initech', amount: 750.50, date: '2023-02-20', status: 'paid', dueDate: '2023-03-20' },
-    { id: 'INV-2023-035', client: 'Massive Dynamic', amount: 1250.00, date: '2023-02-15', status: 'paid', dueDate: '2023-03-15' },
-    { id: 'INV-2023-034', client: 'Cyberdyne Systems', amount: 4800.25, date: '2023-02-10', status: 'overdue', dueDate: '2023-03-10' },
-    { id: 'INV-2023-033', client: 'Soylent Corp', amount: 920.75, date: '2023-02-05', status: 'paid', dueDate: '2023-03-05' },
-  ];
+  const dispatch = useDispatch();
+  const { invoices, totalCount, currentPage } = useSelector(state => state.invoices);
+  const PAGE_SIZE = 10;
+  
   
   useEffect(() => {
-    // Simulate loading data
-    const timer = setTimeout(() => {
-      setLoading(false);
-    }, 500);
-    
-    return () => clearTimeout(timer);
-  }, []);
+    const loadInvoices = async () => {
+      try {
+        dispatch(setLoading(true));
+        const result = await fetchInvoices(currentPage, PAGE_SIZE, searchQuery, statusFilter);
+        dispatch(setInvoices(result.invoices));
+        dispatch(setTotalCount(result.totalCount));
+        dispatch(setLoading(false));
+        setLoading(false);
+      } catch (error) {
+        console.error('Error loading invoices:', error);
+        dispatch(setError('Failed to load invoices. Please try again.'));
+        dispatch(setLoading(false));
+        setLoading(false);
+        toast.error('Failed to load invoices');
+      }
+    };
+
+    loadInvoices();
+  }, [dispatch, currentPage, searchQuery, statusFilter]);
   
+  const handlePageChange = (newPage) => {
+    dispatch(setCurrentPage(newPage));
+  };
+
+  const handleSearch = (e) => {
+    e.preventDefault();
+    dispatch(setCurrentPage(1));
+  };
+
   const formatCurrency = (amount) => {
     return new Intl.NumberFormat('en-US', {
       style: 'currency',
       currency: 'USD',
     }).format(amount);
   };
-  
+
   const formatDate = (dateString) => {
     return new Date(dateString).toLocaleDateString('en-US', {
       year: 'numeric',
@@ -52,7 +71,7 @@ const InvoiceList = () => {
       day: 'numeric'
     });
   };
-  
+
   const getStatusClass = (status) => {
     switch(status) {
       case 'paid':
@@ -65,12 +84,6 @@ const InvoiceList = () => {
         return 'bg-surface-100 text-surface-800 dark:bg-surface-700 dark:text-surface-200';
     }
   };
-  
-  const filteredInvoices = invoices.filter(invoice => 
-    invoice.id.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    invoice.client.toLowerCase().includes(searchQuery.toLowerCase())
-  );
-  
   return (
     <div className="flex-1 p-4 md:p-6">
       <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-6">
@@ -90,20 +103,26 @@ const InvoiceList = () => {
       <div className="dashboard-card mb-6">
         <div className="flex flex-col md:flex-row md:items-center gap-4 mb-6">
           <div className="relative flex-1">
-            <input
-              type="text"
-              placeholder="Search invoices or clients..."
-              className="input pl-10 w-full"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-            />
-            <SearchIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-surface-500" />
+            <form onSubmit={handleSearch}>
+              <input
+                type="text"
+                placeholder="Search invoices or clients..."
+                className="input pl-10 w-full"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
+              <SearchIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-surface-500" />
+            </form>
           </div>
           
-          <button className="btn btn-outline flex items-center gap-2">
-            <FilterIcon className="h-4 w-4" />
-            Filters
-          </button>
+          <div>
+            <select className="input" value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)}>
+              <option value="">All Status</option>
+              <option value="paid">Paid</option>
+              <option value="pending">Pending</option>
+              <option value="overdue">Overdue</option>
+            </select>
+          </div>
         </div>
         
         <div className="table-container">
@@ -120,16 +139,24 @@ const InvoiceList = () => {
               </tr>
             </thead>
             <tbody>
-              {filteredInvoices.map(invoice => (
-                <tr key={invoice.id}>
-                  <td>{invoice.id}</td>
-                  <td>{invoice.client}</td>
+              {loading ? (
+                <tr>
+                  <td colSpan="7" className="text-center py-4">Loading invoices...</td>
+                </tr>
+              ) : invoices.length === 0 ? (
+                <tr>
+                  <td colSpan="7" className="text-center py-4">No invoices found</td>
+                </tr>
+              ) : invoices.map(invoice => (
+                <tr key={invoice.Id}>
+                  <td>{invoice.invoiceNumber}</td>
+                  <td>{invoice.clientName}</td>
                   <td>{formatDate(invoice.date)}</td>
                   <td>{formatDate(invoice.dueDate)}</td>
                   <td>{formatCurrency(invoice.amount)}</td>
                   <td>
                     <span className={`status-badge ${getStatusClass(invoice.status)}`}>
-                      {invoice.status.charAt(0).toUpperCase() + invoice.status.slice(1)}
+                      {(invoice.status || 'pending').charAt(0).toUpperCase() + (invoice.status || 'pending').slice(1)}
                     </span>
                   </td>
                   <td className="text-right">
@@ -137,10 +164,16 @@ const InvoiceList = () => {
                       <button className="p-1 text-surface-500 hover:text-primary">
                         <EyeIcon className="h-4 w-4" />
                       </button>
-                      <button className="p-1 text-surface-500 hover:text-primary">
+                      <Link to={`/invoices/edit/${invoice.Id}`} className="p-1 text-surface-500 hover:text-primary">
                         <EditIcon className="h-4 w-4" />
-                      </button>
-                      <button className="p-1 text-surface-500 hover:text-red-500">
+                      </Link>
+                      <button 
+                        className="p-1 text-surface-500 hover:text-red-500"
+                        onClick={() => {
+                          setInvoiceToDelete(invoice);
+                          setShowDeleteModal(true);
+                        }}
+                      >
                         <TrashIcon className="h-4 w-4" />
                       </button>
                     </div>
@@ -150,6 +183,34 @@ const InvoiceList = () => {
             </tbody>
           </table>
         </div>
+        
+        {/* Pagination */}
+        {totalCount > PAGE_SIZE && (
+          <div className="mt-4 flex justify-between items-center">
+            <div className="text-sm text-surface-600 dark:text-surface-400">
+              Showing {((currentPage - 1) * PAGE_SIZE) + 1} to {Math.min(currentPage * PAGE_SIZE, totalCount)} of {totalCount} invoices
+            </div>
+            <div className="flex gap-2">
+              <button 
+                className="btn btn-outline py-1 px-3" 
+                disabled={currentPage === 1}
+                onClick={() => handlePageChange(currentPage - 1)}
+              >
+                Previous
+              </button>
+              <span className="btn py-1 px-3 bg-surface-100 dark:bg-surface-700">
+                {currentPage}
+              </span>
+              <button 
+                className="btn btn-outline py-1 px-3" 
+                disabled={currentPage * PAGE_SIZE >= totalCount}
+                onClick={() => handlePageChange(currentPage + 1)}
+              >
+                Next
+              </button>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
