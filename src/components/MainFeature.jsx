@@ -277,7 +277,7 @@ const MainFeature = () => {
         loading ? (
           <div className="flex items-center justify-center h-64">Loading...</div>
         ) : (
-        <InvoicePreview formData={formData} onClose={() => setShowPreview(false)} />
+          <InvoicePreview formData={formData} onClose={() => setShowPreview(false)} />
       ) : (
         <>
           <header className="mb-6">
@@ -493,19 +493,6 @@ const MainFeature = () => {
                           <th className="text-right py-3 px-2 w-32">Total</th>
                           <th className="w-16"></th>
                         </tr>
-                      <td className="py-2 px-2">
-                        <select 
-                          className="input text-sm"
-                          onChange={(e) => handleSelectProduct(e.target.value, item.id)}
-                        >
-                          <option value="">-- Select Product --</option>
-                          {products.map(product => (
-                            <option key={product.Id} value={product.Id}>
-                              {product.Name} (${product.price.toFixed(2)})
-                            </option>
-                          ))}
-                        </select>
-                      </td>
                       </thead>
                       <tbody>
                         {formData.items.map((item) => (
@@ -518,6 +505,19 @@ const MainFeature = () => {
                                 placeholder="Item description"
                                 className="input"
                               />
+                            </td>
+                            <td className="py-2 px-2">
+                              <select 
+                                className="input text-sm"
+                                onChange={(e) => handleSelectProduct(e.target.value, item.id)}
+                              >
+                                <option value="">-- Select Product --</option>
+                                {products.map(product => (
+                                  <option key={product.Id} value={product.Id}>
+                                    {product.Name} (${product.price.toFixed(2)})
+                                  </option>
+                                ))}
+                              </select>
                             </td>
                             <td className="py-2 px-2">
                               <input
@@ -691,7 +691,7 @@ const MainFeature = () => {
                       </button>
                       <button 
                         onClick={saveInvoice}
-                        disabled={loading}>
+                        disabled={loading}
                       >
                         <SaveIcon className="h-4 w-4" />
                         Save Invoice
