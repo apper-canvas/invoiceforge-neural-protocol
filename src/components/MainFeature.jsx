@@ -706,7 +706,7 @@ const MainFeature = () => {
           </div>
         </>
         )
-      )}
+      }
     </div>
   );
 };
