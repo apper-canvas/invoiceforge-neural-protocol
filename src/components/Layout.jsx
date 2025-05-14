@@ -111,24 +111,6 @@ const Layout = ({ darkMode, toggleDarkMode }) => {
               <li>
                 <button 
                   className="nav-link w-full"
-                  onClick={toggleDarkMode}
-                >
-                  {darkMode ? (
-                    <>
-                      <SunIcon className="h-5 w-5 mr-3" />
-                      <span>Light Mode</span>
-                    </>
-                  ) : (
-                    <>
-                      <MoonIcon className="h-5 w-5 mr-3" />
-                      <span>Dark Mode</span>
-                    </>
-                  )}
-                </button>
-              </li>
-              <li>
-                <button 
-                  className="nav-link w-full"
                   onClick={handleLogout}
                 >
                   <LogoutIcon className="h-5 w-5 mr-3" />
@@ -153,7 +135,7 @@ const Layout = ({ darkMode, toggleDarkMode }) => {
         {/* Top navigation for mobile/tablet */}
         <header className="bg-white dark:bg-surface-800 shadow-sm border-b border-surface-200 dark:border-surface-700 sticky top-0 z-10">
           <div className="px-4 py-3 flex items-center justify-between">
-            <button
+            <button 
               type="button"
               className="lg:hidden text-surface-600 hover:text-surface-900 dark:text-surface-400 dark:hover:text-surface-50"
               onClick={toggleSidebar}
@@ -161,8 +143,8 @@ const Layout = ({ darkMode, toggleDarkMode }) => {
               <MenuIcon className="h-6 w-6" />
             </button>
             
-            <div className="lg:hidden flex items-center space-x-1">
-              <FileInvoiceIcon className="h-6 w-6 text-primary" />
+            <div className="flex items-center space-x-1">
+              <FileInvoiceIcon className="h-6 w-6 text-primary hidden lg:block" />
               <span className="font-bold">InvoiceForge</span>
             </div>
             
@@ -170,11 +152,12 @@ const Layout = ({ darkMode, toggleDarkMode }) => {
               <button 
                 onClick={toggleDarkMode}
                 className="p-2 text-surface-600 hover:text-surface-900 dark:text-surface-400 dark:hover:text-surface-50 rounded-full hover:bg-surface-100 dark:hover:bg-surface-700"
+                aria-label={darkMode ? "Switch to Light Mode" : "Switch to Dark Mode"}
               >
                 {darkMode ? (
-                  <SunIcon className="h-5 w-5" />
+                  <SunIcon className="h-5 w-5" aria-hidden="true" />
                 ) : (
-                  <MoonIcon className="h-5 w-5" />
+                  <MoonIcon className="h-5 w-5" aria-hidden="true" />
                 )}
               </button>
             </div>
