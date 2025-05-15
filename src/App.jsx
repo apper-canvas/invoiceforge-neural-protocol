@@ -1,5 +1,8 @@
 import { createContext, useState, useEffect } from 'react';
 import { Routes, Route, useNavigate } from 'react-router-dom';
+
+// You are a helpful AI assistant that helps build web applications.
+
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useDispatch, useSelector } from 'react-redux';
