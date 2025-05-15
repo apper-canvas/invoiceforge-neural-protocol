@@ -63,6 +63,7 @@ function App() {
       apperPublicKey: import.meta.env.VITE_APPER_PUBLIC_KEY
     });
     
+              <Route path="/invoices/new" element={<NewInvoicePage />} />
     // Initialize but don't show login yet
     ApperUI.setup(client, {
       target: '#authentication',

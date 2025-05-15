@@ -12,6 +12,8 @@ const InvoicePreview = ({ formData, onClose, hideControls = false, forwardedRef 
       style: 'currency',
       currency: 'USD',
     }).format(amount);
+  };
+  
   return (
     <div 
       className="h-full overflow-y-auto border-l border-surface-200 dark:border-surface-700" 

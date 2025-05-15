@@ -22,7 +22,7 @@ const PercentIcon = getIcon('Percent');
 const EditIcon = getIcon('Edit');
 const CloseIcon = getIcon('X');
 
-const MainFeature = forwardRef(({ formData, setFormData, onSave, onPreview, loading }, ref) => {
+const MainFeature = forwardRef(({ formData, setFormData, onSave, loading }, ref) => {
   const [activeTab, setActiveTab] = useState('details');
   const [clients, setClients] = useState([]);
   const [products, setProducts] = useState([]);
@@ -179,20 +179,18 @@ const MainFeature = forwardRef(({ formData, setFormData, onSave, onPreview, load
   return (
     <div className="w-full h-full overflow-y-auto" ref={ref}>
       <div className="p-6">
-        <header className="mb-6">
-          <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-6">
+        <header className="mb-4">
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-4">
             <div className="flex items-center mb-4 md:mb-0">
               <FileInvoiceIcon className="h-8 w-8 text-primary mr-2" />
               <h1 className="text-xl md:text-2xl font-bold">Create New Invoice</h1>
             </div>
-              <div className="flex flex-wrap gap-2">
-                {/* Move buttons to right side on mobile */}
+              <div className="flex gap-2">
                 <button 
                   className="btn btn-primary flex items-center gap-2"
+                  onClick={onSave}
+                  disabled={loading}
                 >
-                  <SendIcon className="h-4 w-4" aria-hidden="true" />
-                  <SaveIcon className="h-4 w-4" /> 
-                  Save
                 </button>
                 <button 
                   onClick={sendInvoice}
@@ -241,7 +239,7 @@ const MainFeature = forwardRef(({ formData, setFormData, onSave, onPreview, load
           <div className="card">
             <AnimatePresence mode="wait" initial={false}>
               {activeTab === 'details' && (
-                <motion.div
+                <motion.div 
                   key="details"
                   variants={tabVariants}
                   initial="hidden"
@@ -575,9 +573,10 @@ const MainFeature = forwardRef(({ formData, setFormData, onSave, onPreview, load
                     </button>
                     <div className="flex gap-2">
                       <button 
-                        onClick={onSave}
+                        onClick={onSave} 
                         disabled={loading}
-                        className="btn btn-primary flex items-center gap-2"
+                        className="btn btn-primary flex items-center gap-2" 
+                        aria-label="Save Invoice"
                       >
                         <SaveIcon className="h-4 w-4" />
                         Save Invoice
