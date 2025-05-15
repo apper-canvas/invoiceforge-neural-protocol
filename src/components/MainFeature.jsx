@@ -188,10 +188,10 @@ const MainFeature = forwardRef(({ formData, setFormData, onSave, onPreview, load
               <div className="flex flex-wrap gap-2">
                 {/* Move buttons to right side on mobile */}
                 <button 
-                  <SendIcon className="h-4 w-4" aria-hidden="true" />
                   className="btn btn-primary flex items-center gap-2"
                 >
-                  <SaveIcon className="h-4 w-4" />
+                  <SendIcon className="h-4 w-4" aria-hidden="true" />
+                  <SaveIcon className="h-4 w-4" /> 
                   Save
                 </button>
                 <button 
