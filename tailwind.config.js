@@ -8,16 +8,16 @@ export default {
     extend: {
       colors: {
         primary: {
-          DEFAULT: '#06B6D4',
-          light: '#22D3EE', 
-          dark: '#0891B2'
+          DEFAULT: '#6366F1',
+          light: '#818CF8', 
+          dark: '#4F46E5'
         }, 
         secondary: { 
-          DEFAULT: '#0EA5E9', 
-          light: '#38BDF8',
-          dark: '#0284C7' 
+          DEFAULT: '#8B5CF6', 
+          light: '#A78BFA',
+          dark: '#7C3AED' 
         }, 
-        accent: '#2DD4BF',
+        accent: '#F43F5E',
         surface: {
           50: '#f8fafc',   // Lightest
           100: '#f1f5f9',
