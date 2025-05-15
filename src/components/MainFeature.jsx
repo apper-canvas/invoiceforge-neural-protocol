@@ -1,12 +1,11 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, forwardRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { toast } from 'react-toastify';
 import getIcon from '../utils/iconUtils';
-import { useNavigate } from 'react-router-dom';
-import { createInvoice } from '../services/invoiceService';
-import { createInvoiceItems } from '../services/invoiceItemService';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { fetchClients } from '../services/clientService';
-import InvoicePreview from './InvoicePreview';
+import { format } from 'date-fns';
+
 import { fetchProducts } from '../services/productService';
 
 // Icons
@@ -17,39 +16,24 @@ const SaveIcon = getIcon('Save');
 const EyeIcon = getIcon('Eye');
 const PrintIcon = getIcon('Printer');
 const SendIcon = getIcon('Send');
-const CalendarIcon = getIcon('Calendar');
+const CalendarIcon = getIcon('Calendar'); 
 const DollarSignIcon = getIcon('DollarSign');
 const PercentIcon = getIcon('Percent');
 const EditIcon = getIcon('Edit');
 const CloseIcon = getIcon('X');
 
-const MainFeature = () => {
+const MainFeature = forwardRef(({ formData, setFormData, onSave, onPreview, loading }, ref) => {
   const [activeTab, setActiveTab] = useState('details');
-  const [showPreview, setShowPreview] = useState(false);
-  const [loading, setLoading] = useState(false);
   const [clients, setClients] = useState([]);
   const [products, setProducts] = useState([]);
   const navigate = useNavigate();
-  const [formData, setFormData] = useState({
-    invoiceNumber: generateInvoiceNumber(),
-    date: formatDate(new Date()),
-    dueDate: formatDate(new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)), // 30 days from now
-    clientName: '',
-    clientEmail: '',
-    clientAddress: '',
-    items: [{ id: 1, description: '', quantity: 1, price: 0, total: 0 }],
-    subtotal: 0,
-    taxRate: 0,
-    taxAmount: 0,
-    total: 0,
-    notes: '',
-  });
   
   // Load client and product data for form selectors
   useEffect(() => {
     const loadFormData = async () => {
       try {
-        setLoading(true);
+        // Use local loading state just for this operation
+        const [loadingClients, setLoadingClients] = useState(true);
         
         // Load clients for client selection
         const clientResult = await fetchClients(1, 100); // Get up to 100 clients
@@ -57,10 +41,7 @@ const MainFeature = () => {
         
         // Load products for product selection
         const productResult = await fetchProducts(1, 100); // Get up to 100 products
-        setProducts(productResult.products || []);
-        
-        setLoading(false);
-      } catch (error) {
+        setProducts(productResult.products || []);      } catch (error) {
         console.error("Error loading form data:", error);
         toast.error("Failed to load clients and products");
         setLoading(false);
@@ -80,19 +61,6 @@ const MainFeature = () => {
       handleItemChange(itemId, 'total', formData.items.find(i => i.id === itemId).quantity * selectedProduct.price);
     }
   };
-  
-  // Generate invoice number like INV-2023-001
-  function generateInvoiceNumber() {
-    const date = new Date();
-    const year = date.getFullYear();
-    const random = Math.floor(Math.random() * 1000).toString().padStart(3, '0');
-    return `INV-${year}-${random}`;
-  }
-  
-  // Format date to YYYY-MM-DD
-  function formatDate(date) {
-    return date.toISOString().split('T')[0];
-  }
   
   // Calculate totals
   useEffect(() => {
@@ -179,69 +147,6 @@ const MainFeature = () => {
   };
   
   // Save invoice to database
-  const saveInvoice = async () => {
-    // Validate form
-    if (!formData.clientName) {
-      toast.error("Please enter client name");
-      setActiveTab('details');
-      return;
-    }
-
-    if (!formData.clientEmail) {
-      toast.error("Please enter client email");
-      setActiveTab('details');
-      return;
-    }
-
-    // Check if any item has empty description
-    const hasEmptyItems = formData.items.some(item => !item.description);
-    if (hasEmptyItems) {
-      toast.error("Please fill in all item descriptions");
-      setActiveTab('items');
-      return;
-    }
-
-    try {
-      setLoading(true);
-      
-      // Prepare invoice data for creation
-      const invoiceData = {
-        invoiceNumber: formData.invoiceNumber,
-        date: formData.date,
-        dueDate: formData.dueDate,
-        clientName: formData.clientName,
-        clientEmail: formData.clientEmail,
-        clientAddress: formData.clientAddress,
-        subtotal: formData.subtotal,
-        taxRate: formData.taxRate,
-        taxAmount: formData.taxAmount,
-        total: formData.total,
-        notes: formData.notes,
-        status: 'pending'
-      };
-      
-      // Create invoice in database
-      const createdInvoice = await createInvoice(invoiceData);
-      
-      // Create invoice items
-      const invoiceItems = formData.items.map(item => ({
-        description: item.description,
-        quantity: item.quantity,
-        price: item.price,
-        total: item.total,
-        invoice_id: createdInvoice.Id
-      }));
-      
-      await createInvoiceItems(invoiceItems, createdInvoice.Id);
-      
-      toast.success("Invoice saved successfully!");
-      navigate('/invoices');
-    } catch (error) {
-      console.error("Error saving invoice:", error);
-      toast.error("Failed to save invoice. Please try again.");
-      setLoading(false);
-    }
-  };
   
   // Send invoice
   const sendInvoice = () => {
@@ -272,32 +177,18 @@ const MainFeature = () => {
   };
   
   return (
-    <div className="w-full">
-      {showPreview ? (
-          loading ? (
-            <div className="flex items-center justify-center h-64">Loading...</div>
-          ) : (
-            <InvoicePreview formData={formData} onClose={() => setShowPreview(false)} />
-          )
-      ) : (
-          <>
-            <header className="mb-6">
-              <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-6">
-                <div className="flex items-center mb-4 md:mb-0">
-                <FileInvoiceIcon className="h-8 w-8 text-primary mr-2" />
-                <h1 className="text-xl md:text-2xl font-bold">Create New Invoice</h1>
-              </div>
-              
+    <div className="w-full h-full overflow-y-auto" ref={ref}>
+      <div className="p-6">
+        <header className="mb-6">
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-6">
+            <div className="flex items-center mb-4 md:mb-0">
+              <FileInvoiceIcon className="h-8 w-8 text-primary mr-2" />
+              <h1 className="text-xl md:text-2xl font-bold">Create New Invoice</h1>
+            </div>
               <div className="flex flex-wrap gap-2">
+                {/* Move buttons to right side on mobile */}
                 <button 
-                  onClick={() => setShowPreview(true)}
-                  className="btn btn-outline flex items-center gap-2"
-                >
-                  <EyeIcon className="h-4 w-4" />
-                  Preview
-                </button>
-                <button 
-                  onClick={saveInvoice}
+                  <SendIcon className="h-4 w-4" aria-hidden="true" />
                   className="btn btn-primary flex items-center gap-2"
                 >
                   <SaveIcon className="h-4 w-4" />
@@ -348,7 +239,7 @@ const MainFeature = () => {
           </header>
           
           <div className="card">
-            <AnimatePresence mode="wait">
+            <AnimatePresence mode="wait" initial={false}>
               {activeTab === 'details' && (
                 <motion.div
                   key="details"
@@ -684,31 +575,22 @@ const MainFeature = () => {
                     </button>
                     <div className="flex gap-2">
                       <button 
-                        onClick={() => setShowPreview(true)}
-                        className="btn btn-outline flex items-center gap-2"
-                      >
-                        <EyeIcon className="h-4 w-4" />
-                        Preview
-                      </button>
-                      <button 
-                        onClick={saveInvoice}
+                        onClick={onSave}
                         disabled={loading}
                         className="btn btn-primary flex items-center gap-2"
                       >
                         <SaveIcon className="h-4 w-4" />
                         Save Invoice
                       </button>
-                    </div>
-                  </div>
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </div>
-        </>
-        )
-      }
+                     </div>
+                   </div>
+                 </motion.div>
+               )}
+             </AnimatePresence>
+           </div>
+         </div>
     </div>
-  );
-};
+  )
+});
 
 export default MainFeature;

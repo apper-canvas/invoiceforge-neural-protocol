@@ -65,6 +65,7 @@ function App() {
     // Initialize but don't show login yet
     ApperUI.setup(client, {
       target: '#authentication',
+import CreateInvoicePage from './pages/CreateInvoicePage';
       clientId: import.meta.env.VITE_APPER_PROJECT_ID,
       view: 'both',
       onSuccess: function (user) {
@@ -147,6 +148,7 @@ function App() {
   };
 
   // Don't render routes until initialization is complete
+        <Route path="/invoices/create" element={<CreateInvoicePage />} />
   if (!isInitialized) {
     return <div className="loading min-h-screen flex items-center justify-center">
       <div className="w-10 h-10 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
