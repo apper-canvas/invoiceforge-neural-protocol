@@ -82,7 +82,12 @@ const Dashboard = () => {
   if (error) {
     return (
       <div className="flex-1 p-4 md:p-6">
-        <div className="text-red-500 dark:text-red-400">{error}</div>
+        <div className="mb-6">
+          <h1 className="text-2xl font-bold mb-1">Dashboard</h1>
+          <p className="text-red-500 dark:text-red-400 mb-4">{error}</p>
+        </div>
+        
+        <AIAssistantMessage />
       </div>
     );
   }
