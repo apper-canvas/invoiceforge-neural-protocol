@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import getIcon from '../utils/iconUtils';
 import { fetchDashboardStatistics } from '../services/dashboardService';
-import AiAssistantMessage from '../components/AiAssistantMessage';
+import AIAssistantMessage from '../components/AIAssistantMessage';
 import { fetchInvoices } from '../services/invoiceService';
 
 // Icons
@@ -143,7 +143,7 @@ const Dashboard = () => {
       </div>
       
       {/* AI Assistant Message */}
-      <AiAssistantMessage />
+      <AIAssistantMessage />
       
       <motion.div 
         variants={containerVariants}
