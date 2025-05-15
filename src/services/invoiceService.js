@@ -104,3 +104,18 @@ export async function createInvoice(invoiceData) {
     throw error;
   }
 }
+
+export async function fetchInvoiceSummaryData() {
+  try {
+    // Fetch all invoices to calculate summary data
+    // Using a high limit to get all records
+    const { invoices, total } = await fetchInvoices(1, 1000);
+    
+    return {
+      invoices: invoices
+    };
+  } catch (error) {
+    console.error("Error fetching invoice summary data:", error);
+    throw error;
+  }
+}
